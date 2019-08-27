@@ -37,7 +37,7 @@ module.exports = class WebpackMonorepoResolver {
         descriptionFileRoot
       } = request
 
-      const isModuleImport = (originalRequestStr.startsWith('.') && !path.isAbsolute(originalRequestStr))
+      const isModuleImport = (!originalRequestStr.startsWith('.') && !path.isAbsolute(originalRequestStr))
       if (!isModuleImport) {
         return callback()
       }
