@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "test": "jest",
-    "test:watch": "npm run test -- --watchAll"
+    "test:watch": "npm run test -- --watchAll",
+    "prepublish": "npm run test"
   },
   "jest": {
     "modulePathIgnorePatterns": [
