@@ -1,6 +1,6 @@
 {
   "name": "@welldone-software/webpack-monorepo-resolver",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Sets webpack to resolve modules relative to the package of the resolver.",
   "author": "Vitali Zaidman <vzaidman@gmail.com> (https://github.com/vzaidman)",
   "repository": {
@@ -26,8 +26,8 @@
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "@types/webpack": "^4.39.1",
-    "webpack": "^4.39.2",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "webpack": "^4.39.2"
   },
   "license": "MIT",
   "keywords": [
