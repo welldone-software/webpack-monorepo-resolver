@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = class WebpackMonorepoResolver {
-  constructor({possiblePackageEntries} = {possiblePackageEntries: ['src']}) {
+  constructor({possiblePackageEntries} = {possiblePackageEntries: ['', 'src']}) {
     this.possiblePackageEntries = possiblePackageEntries
   }
 
@@ -27,36 +27,31 @@ module.exports = class WebpackMonorepoResolver {
     // so the resolution process would go on to node_modules etc...
     const targetHook = resolver.ensureHook('describedRelative')
 
-    sourceHook.tapAsync('WebpackMonorepoResolver', (request, resolveContext, callback) => {
-      const {
-        // The exact request string being resolved. f.e: 'common/service/api'
-        request: originalRequestStr,
-        // The path of the *requesting* file
-        path: requestingFilePath,
-        // This is the path of the folder of the nearest package.json to the *requesting* file.
-        descriptionFileRoot
-      } = request
+    this.possiblePackageEntries.forEach(packageEntry => {
+      sourceHook.tapAsync('WebpackMonorepoResolver', (request, resolveContext, callback) => {
+        const {
+          // The exact request string being resolved. f.e: 'common/service/api'
+          request: originalRequestStr,
+          // The path of the *requesting* file
+          path: requestingFilePath,
+          // This is the path of the folder of the nearest package.json to the *requesting* file.
+          descriptionFileRoot
+        } = request
 
-      const isModuleImport = (!originalRequestStr.startsWith('.') && !path.isAbsolute(originalRequestStr))
-      if (!isModuleImport) {
-        return callback()
-      }
+        const isModuleImport = (!originalRequestStr.startsWith('.') && !path.isAbsolute(originalRequestStr))
+        if (!isModuleImport) {
+          return callback()
+        }
 
-      const packageEntry = this.possiblePackageEntries.find(possibleEntry => {
-        const possibleEntryPath = path.resolve(descriptionFileRoot, possibleEntry)
-        const isFileRequestingStartsWithThisEntryPath = requestingFilePath.startsWith(possibleEntryPath)
-        return isFileRequestingStartsWithThisEntryPath
-      }) || ''
-
-      const monorepoResolvedPath = path.resolve(descriptionFileRoot, packageEntry, originalRequestStr)
-
-      resolver.doResolve(
-        targetHook,
-        {...request, path: monorepoResolvedPath},
-        `WebpackMonorepoResolver resolved path: ${monorepoResolvedPath}`,
-        resolveContext,
-        callback
-      )
+        const monorepoResolvedPath = path.resolve(descriptionFileRoot, packageEntry, originalRequestStr)
+        resolver.doResolve(
+          targetHook,
+          {...request, path: monorepoResolvedPath},
+          `WebpackMonorepoResolver resolved path: ${monorepoResolvedPath}`,
+          resolveContext,
+          callback
+        )
+      })
     })
   }
 }
